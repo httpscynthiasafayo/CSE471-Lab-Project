@@ -77,7 +77,7 @@ export function AuthProvider({ children }) {
       throw new Error("Failed to cancel subscription.");
     }
   };
-  // Helper function to check if user is landowner
+    // Helper function to check if user is landowner
   const isLandowner = () => {
     return user?.role === 'landowner'
   }
@@ -88,12 +88,12 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      login, 
-      register, 
-      logout, 
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      login,
+      register,
+      logout,
       refresh: fetchMe,
       subscribeFree,
       subscribePremium,

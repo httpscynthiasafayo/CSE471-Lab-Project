@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCountries, getAllPrograms } from '../constants/guideData';
 import { useAuth } from '../context/AuthContext';
@@ -199,7 +199,7 @@ export default function Home() {
             <p className="text-xl mb-8 text-white/90 leading-relaxed">
               Your gateway to international education. Find the perfect university, get expert guidance, and make your study abroad dreams a reality.
             </p>
-            
+
             {/* Search Bar */}
             <div className="bg-white rounded-2xl p-3 shadow-2xl">
               <div className="flex items-center">
@@ -212,7 +212,7 @@ export default function Home() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyPress}
                 />
-                <button 
+                <button
                   onClick={handleSearch}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium"
                 >
@@ -246,7 +246,7 @@ export default function Home() {
                   </div>
                 );
               }
-              
+
               return (
                 <Link
                   key={link.path}
