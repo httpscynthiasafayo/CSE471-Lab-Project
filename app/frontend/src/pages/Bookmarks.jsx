@@ -4,7 +4,8 @@ import { Trash2 } from "lucide-react";
 
 export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([])
-  const [items, setItems] = useState({})  
+  const [items, setItems] = useState({}) 
+  const [posts, setPosts] = useState({}) 
   const [loading, setLoading] = useState(true)
 
   const loadBookmarks = async () => {

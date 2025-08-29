@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { api } from '../api/axios'
-import OwnerContactPopupForUser from '../components/ownercontact_popup_foruser'
+import { api } from '../api/axios.js'
+import OwnerContactPopupForUser from '../components/ownercontact_popup_foruser.jsx'
 import LandownerContactPopup from '../components/ownercontact_upload_landowner.jsx'
 
 export default function HousingDetail() {
   const { id } = useParams()
-
   const [prop, setProp] = useState(null)
   const [me, setMe] = useState(null)           // ← signed-in user
   const [loadingMe, setLoadingMe] = useState(true)
@@ -87,7 +86,6 @@ export default function HousingDetail() {
     setProp(data)
     setEdit(false)
   }
-
   if (!prop || loadingMe) return <div>Loading...</div>
 
   // ---------- UI flags (UI-only change) ----------
@@ -95,8 +93,7 @@ export default function HousingDetail() {
   const showEditButton = canEdit                         // admin OR owner
   const showUploadButton = isLandowner                   // ANY landowner sees this
   const showRequestButton = !isLandowner && !isOwner && !isAdmin // non-landowner, non-owner, non-admin
-  // ------------------------------------------------
-
+  // ------
   return (
     <div className="card">
       {!edit ? (

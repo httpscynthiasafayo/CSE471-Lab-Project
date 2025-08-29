@@ -9,7 +9,7 @@ const Success = () => {
   // useEffect(() => {
   //   const markPremium = async () => {
   //     try {
-  //       const res = await fetch('http://localhost:1096/backend/me/subscribe-premium', {
+  //       const res = await fetch('http://localhost:1617/backend/me/subscribe-premium', {
   //         method: 'POST',
   //         credentials: 'include',
   //       });
@@ -29,11 +29,11 @@ const Success = () => {
     if (!sessionId) return;
 
     // Get Stripe session details from backend
-    const res = await fetch(`http://localhost:1096/backend/stripe/get-session-details?sessionId=${sessionId}`);
+    const res = await fetch(`http://localhost:1617/backend/stripe/get-session-details?sessionId=${sessionId}`);
     const { subscriptionId } = await res.json();
 
     // Call subscribe-premium with subscriptionId
-    await fetch('http://localhost:1096/backend/me/subscribe-premium', {
+    await fetch('http://localhost:1617/backend/me/subscribe-premium', {
       method: 'POST',
       credentials: 'include',
       headers: { "Content-Type": "application/json" },

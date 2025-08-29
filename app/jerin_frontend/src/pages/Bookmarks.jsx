@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/axios'
+import { Trash2 } from "lucide-react";
 
 export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([])
+  const [items, setItems] = useState({}) 
   const [posts, setPosts] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -11,20 +13,31 @@ export default function Bookmarks() {
       const { data } = await api.get('/bookmarks')
       setBookmarks(data)
       
-      // Fetch post details for POST bookmarks
+      const details = {}
+
+     
       const postBookmarks = data.filter(b => b.itemType === 'POST')
-      const postDetails = {}
-      
       for (const bookmark of postBookmarks) {
         try {
           const { data: post } = await api.get(`/posts/${bookmark.itemId}`)
-          postDetails[bookmark.itemId] = post
+          details[bookmark.itemId] = post
         } catch (error) {
           console.error('Error fetching post:', error)
         }
       }
       
-      setPosts(postDetails)
+      
+      const propertyBookmarks = data.filter(b => b.itemType === 'PROPERTY')
+      for (const bookmark of propertyBookmarks) {
+        try {
+          const { data: property } = await api.get(`/properties/${bookmark.itemId}`)
+          details[bookmark.itemId] = property
+        } catch (error) {
+          console.error('Error fetching property:', error)
+        }
+      }
+
+      setItems(details)
     } catch (error) {
       console.error('Error loading bookmarks:', error)
     } finally {
@@ -50,7 +63,7 @@ export default function Bookmarks() {
       <div className="space-y-4">
         {bookmarks.map(bookmark => {
           if (bookmark.itemType === 'POST') {
-            const post = posts[bookmark.itemId]
+            const post = items[bookmark.itemId]
             if (!post) {
               return (
                 <div key={bookmark._id} className="card bg-red-50 border-red-200">
@@ -60,10 +73,10 @@ export default function Bookmarks() {
                       <div className="text-sm text-red-500">This guide may have been deleted</div>
                     </div>
                     <button 
-                      className="btn bg-red-500 hover:bg-red-600 text-white"
+                      className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
                       onClick={() => removeBookmark(bookmark._id)}
                     >
-                      Remove
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </div>
@@ -121,34 +134,61 @@ export default function Bookmarks() {
                   </div>
                   
                   <button 
-                    className="btn bg-red-500 hover:bg-red-600 text-white ml-4"
+                    className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
                     onClick={() => removeBookmark(bookmark._id)}
                   >
-                    Remove
+                    <Trash2 size={18} />
                   </button>
                 </div>
               </div>
             )
           }
 
-          // For other bookmark types (PROPERTY, UNIVERSITY)
+          if (bookmark.itemType === 'PROPERTY') {
+            const property = items[bookmark.itemId]
+            if (!property) {
           return (
-            <div key={bookmark._id} className="card">
+                <div key={bookmark._id} className="card bg-yellow-50 border-yellow-200">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="text-sm text-blue-600 font-medium">{bookmark.itemType}</div>
-                  <div className="text-blue-900">ID: {bookmark.itemId}</div>
-                  <div className="text-xs text-gray-500">Saved: {new Date(bookmark.createdAt).toLocaleString()}</div>
+                      <div className="text-yellow-600 font-medium">Property Not Found</div>
+                      <div className="text-sm text-yellow-500">This property may have been deleted</div>
+                    </div>
+                    <button 
+                      className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
+                      onClick={() => removeBookmark(bookmark._id)}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              )
+            }
+
+            return (
+              <div key={bookmark._id} className="card">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">{property.title}</h3>
+                    <div className="text-gray-700">📍 {property.location}</div>
+                    <div className="text-gray-700">💰 {property.price} BDT</div>
+                    <div className="text-gray-600 mt-2">{property.description}</div>
+                    <div className="text-sm text-gray-500 mt-2">
+                      Bookmarked: {new Date(bookmark.createdAt).toLocaleDateString()}
+                    </div>
                 </div>
                 <button 
-                  className="btn bg-red-500 hover:bg-red-600 text-white"
+                    className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
                   onClick={() => removeBookmark(bookmark._id)}
                 >
-                  Remove
+                    <Trash2 size={18} />
                 </button>
               </div>
             </div>
           )
+          }
+
+          
         })}
         
         {!bookmarks.length && (

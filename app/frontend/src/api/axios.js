@@ -1,6 +1,5 @@
 import axios from 'axios'
-
 export const api = axios.create({
-  baseURL: '/backend',
+  baseURL: '/api',
   withCredentials: true, // send/receive httpOnly cookie
 })

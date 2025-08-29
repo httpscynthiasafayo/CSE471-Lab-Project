@@ -49,7 +49,7 @@ export default function Pricing() {
 
     // Premium → Stripe Checkout
     try {
-      const res = await fetch("http://localhost:1096/backend/stripe/create-checkout-session", {
+      const res = await fetch("http://localhost:1617/backend/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceId: plan.stripePriceId }),

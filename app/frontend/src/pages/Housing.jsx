@@ -252,7 +252,7 @@ export default function Housing() {
           </div>
 
           {/* Admin Section */}
-          {user?.role === "admin" && <AdminCreate onDone={load} />}
+          {user?.role === "landowner" && <LandownerCreate onDone={load} />}
 
           {/* Properties List */}
           <div className="grid gap-4">
@@ -304,7 +304,7 @@ function AdminRowActions({ id, onDone }) {
   );
 }
 
-function AdminCreate({ onDone }) {
+function LandownerCreate({ onDone }) {
   const [f, setF] = useState({
     title: "",
     location: "",
@@ -336,7 +336,7 @@ function AdminCreate({ onDone }) {
   return (
     <div className="card">
       <h3 className="font-semibold text-blue-800 mb-2">
-        Admin: Create Property
+        Landowner: Create Property
       </h3>
       <form onSubmit={create} className="grid md:grid-cols-3 gap-2">
         <input
