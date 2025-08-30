@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/axios'
+import { Link } from 'react-router-dom'
 import { 
   getCountries, 
   getUniversities, 
@@ -652,7 +653,14 @@ export default function Guides() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-bold text-blue-800">{post.title}</h3>
+                      <h3 className="text-lg font-semibold text-blue-800">
+                          <Link
+                            to={`/guides/${post._id}`}
+                            className="hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400 rounded"
+                          >
+                            {post.title}
+                          </Link>
+                      </h3>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                           post.type === 'SOP' ? 'bg-green-100 text-green-800' : 'bg-purple-100 text-purple-800'
                         }`}>

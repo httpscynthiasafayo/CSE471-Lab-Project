@@ -17,8 +17,8 @@ const plans = [
     key: "premium",
     price: 15,
     features: [
-      "Unlimited access to features",
-      "Unlimited access to Housing information",
+      "Access to all features",
+      //"Full access to Housing information",
       "Completely Ad-Free",
       "Regular updates",
     ],
@@ -49,7 +49,7 @@ export default function Pricing() {
 
     // Premium → Stripe Checkout
     try {
-      const res = await fetch("http://localhost:1617/backend/stripe/create-checkout-session", {
+      const res = await fetch("http://localhost:1617/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceId: plan.stripePriceId }),

@@ -62,7 +62,7 @@ export default function LandownerContactPopup({ open, onClose, me }) {
         socialUrl: (socialUrl || '').trim(),
       };
 
-      const res = await api.put('/me/contact', payload); // requires backend route
+      const res = await api.put('/me/contact', payload); // requires api route
       // Update local initial snapshot with what we just saved
       setInitial(payload);
       // Logic 2/4: after saving → go to view mode (Save disappears)
@@ -70,7 +70,7 @@ export default function LandownerContactPopup({ open, onClose, me }) {
     } catch (e) {
       const status = e?.response?.status;
       if (status === 404) {
-        setError('Endpoint /api/me/contact not found. Add the backend route for saving contact info.');
+        setError('Endpoint /api/me/contact not found. Add the api route for saving contact info.');
       } else if (status === 401) {
         setError('Please log in as a landowner to save contact info.');
       } else {

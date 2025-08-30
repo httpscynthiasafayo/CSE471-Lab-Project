@@ -28,8 +28,7 @@ export function AuthProvider({ children }) {
   }
 
   const register = async (name, email, password) => {
-    await api.post('/auth/register', { name, email, password })
-   
+    await api.post('/auth/register', { name, email, password }) 
   }
 
   const logout = async () => {
@@ -90,6 +89,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user,
+      setUser,
       loading,
       login,
       register,

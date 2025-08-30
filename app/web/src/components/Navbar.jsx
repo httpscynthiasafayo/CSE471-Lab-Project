@@ -26,6 +26,7 @@ export default function Navbar() {
             {user && <NavLink to="/guides" className={linkClass}>📚 Guides</NavLink>}
             <NavLink to="/universities" className={linkClass}>🎓 Universities</NavLink>
             <NavLink to="/housing" className={linkClass}>🏠 Housing</NavLink>
+            <NavLink to="/visas" className={linkClass}>📋 Visas</NavLink>
             
             {user && <>
               <NavLink to="/bookmarks" className={linkClass}>🔖 Bookmarks</NavLink>

@@ -4,8 +4,7 @@ import { Trash2 } from "lucide-react";
 
 export default function Bookmarks() {
   const [bookmarks, setBookmarks] = useState([])
-  const [items, setItems] = useState({}) 
-  const [posts, setPosts] = useState({}) 
+  const [items, setItems] = useState({})  
   const [loading, setLoading] = useState(true)
 
   const loadBookmarks = async () => {
@@ -37,6 +36,17 @@ export default function Bookmarks() {
         }
       }
 
+      // Fetch university details for university bookmarks
+      const universityBookmarks = data.filter(b => b.itemType === 'UNIVERSITY')
+      for (const bookmark of universityBookmarks) {
+        try {
+          const { data: university } = await api.get(`/universities/${bookmark.itemId}`)
+          details[bookmark.itemId] = university
+        } catch (error) {
+          console.error('Error fetching university:', error)
+        }
+      }
+
       setItems(details)
     } catch (error) {
       console.error('Error loading bookmarks:', error)
@@ -63,6 +73,7 @@ export default function Bookmarks() {
       <div className="space-y-4">
         {bookmarks.map(bookmark => {
           if (bookmark.itemType === 'POST') {
+            // ...existing code for POST bookmarks...
             const post = items[bookmark.itemId]
             if (!post) {
               return (
@@ -82,7 +93,7 @@ export default function Bookmarks() {
                 </div>
               )
             }
-
+            // ...existing code for rendering post...
             return (
               <div key={bookmark._id} className="card">
                 <div className="flex justify-between items-start">
@@ -95,14 +106,12 @@ export default function Bookmarks() {
                         {post.type} Guide
                       </span>
                     </div>
-                    
                     <div className="space-y-1 mb-3">
                       <div>
                         <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
                           📍 {post.country}
                         </span>
                       </div>
-                      
                       {post.type === 'SOP' && (
                         <div className="flex flex-wrap gap-1 text-xs">
                           {post.university && (
@@ -123,16 +132,13 @@ export default function Bookmarks() {
                         </div>
                       )}
                     </div>
-
                     <div className="text-md text-gray-500 my-2 whitespace-pre-line leading-relaxed bg-gray-50 p-4 rounded-lg">
                       {post.body}
                     </div>
-                    
                     <div className="text-sm text-gray-500">
                       Bookmarked: {new Date(bookmark.createdAt).toLocaleDateString()}
                     </div>
                   </div>
-                  
                   <button 
                     className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
                     onClick={() => removeBookmark(bookmark._id)}
@@ -143,8 +149,8 @@ export default function Bookmarks() {
               </div>
             )
           }
-
           if (bookmark.itemType === 'PROPERTY') {
+            // ...existing code for PROPERTY bookmarks...
             const property = items[bookmark.itemId]
             if (!property) {
               return (
@@ -164,7 +170,6 @@ export default function Bookmarks() {
                 </div>
               )
             }
-
             return (
               <div key={bookmark._id} className="card">
                 <div className="flex justify-between items-start">
@@ -187,10 +192,57 @@ export default function Bookmarks() {
               </div>
             )
           }
+          if (bookmark.itemType === 'UNIVERSITY') {
+            const university = items[bookmark.itemId]
+            if (!university) {
+              return (
+                <div key={bookmark._id} className="card bg-blue-50 border-blue-200">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="text-blue-600 font-medium">University Not Found</div>
+                      <div className="text-sm text-blue-500">This university may have been deleted</div>
+                    </div>
+                    <button 
+                      className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
+                      onClick={() => removeBookmark(bookmark._id)}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              )
+            }
+            return (
+              <div key={bookmark._id} className="card">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">🏛️</span>
+                      <h3 className="text-lg font-semibold text-blue-800">{university.name}</h3>
+                    </div>
+                    <div className="text-gray-700">📍 {university.country}</div>
+                    <div className="text-gray-700">🎓 {university.programTypes?.join(', ')}</div>
+                    {university.url && (
+                      <a href={university.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 underline text-sm">Visit site</a>
+                    )}
+                    <div className="text-sm text-gray-500 mt-2">
+                      Bookmarked: {new Date(bookmark.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <button 
+                    className="p-2 rounded-full bg-red-100 hover:bg-red-200 text-red-600"
+                    onClick={() => removeBookmark(bookmark._id)}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            )
+          }
 
-          
-        })}
         
+        
+        })}
         {!bookmarks.length && (
           <div className="text-center py-16 bg-white rounded-lg shadow-sm">
             <div className="text-gray-400 text-6xl mb-4">📚</div>

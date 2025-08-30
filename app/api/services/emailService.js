@@ -1,174 +1,61 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
-// Create email transporter
-const createTransporter = () => {
-  // For development, you can use a service like Gmail or a test service like Ethereal
-  // For production, use a proper email service like SendGrid, AWS SES, etc.
-  
-  if (process.env.NODE_ENV === 'production') {
-    // Production email configuration
-    return nodemailer.createTransporter({
-      service: process.env.EMAIL_SERVICE || 'gmail',
+const FROM = process.env.EMAIL_FROM || "AbroadEase <noreply@abroadease.com>";
+
+async function getTransporter() {
+  // If you’ve configured SMTP in .env, use it; otherwise create an Ethereal test account.
+  if (process.env.SMTP_HOST) {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-  } else {
-    // Development configuration - using Ethereal for testing
-    return nodemailer.createTransporter({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      auth: {
-        user: process.env.EMAIL_USER || 'ethereal.user@ethereal.email',
-        pass: process.env.EMAIL_PASSWORD || 'ethereal.pass'
-      }
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
     });
   }
-};
+  const test = await nodemailer.createTestAccount();
+  return nodemailer.createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    secure: false,
+    auth: { user: test.user, pass: test.pass },
+  });
+}
 
-// Send landowner verification approval email
-export const sendLandownerApprovalEmail = async (userEmail, userName) => {
-  try {
-    const transporter = createTransporter();
-    
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@abroadease.com',
-      to: userEmail,
-      subject: 'Landowner Verification Approved - AbroadEase',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Landowner Verification Approved</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background-color: #3B82F6; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; background-color: #f9f9f9; }
-            .button { display: inline-block; background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
-            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🎉 Landowner Verification Approved!</h1>
-            </div>
-            <div class="content">
-              <h2>Congratulations, ${userName}!</h2>
-              <p>We're excited to inform you that your landowner verification has been approved by our admin team.</p>
-              
-              <p><strong>What this means:</strong></p>
-              <ul>
-                <li>You can now log in to your landowner account</li>
-                <li>Access to property management features</li>
-                <li>Ability to list and manage your properties</li>
-                <li>Connect with students looking for accommodation</li>
-              </ul>
-              
-              <p>You can now log in to your account and start managing your properties:</p>
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/landowner-login" class="button">
-                Login to Your Account
-              </a>
-              
-              <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
-              
-              <p>Welcome to the AbroadEase landowner community!</p>
-            </div>
-            <div class="footer">
-              <p>This email was sent by AbroadEase. If you didn't request this, please ignore this email.</p>
-              <p>&copy; 2024 AbroadEase. All rights reserved.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
-    };
+/** Send the property owner's contact info to a student */
+export async function sendOwnerContactEmail({ to, property, owner, student }) {
+  const transporter = await getTransporter();
 
-    const result = await transporter.sendMail(mailOptions);
-    console.log('Landowner approval email sent successfully:', result.messageId);
-    return { success: true, messageId: result.messageId };
-  } catch (error) {
-    console.error('Error sending landowner approval email:', error);
-    return { success: false, error: error.message };
-  }
-};
+  const phone = owner?.phone || "Not provided";
+  const wa = owner?.whatsappUrl ? `<a href="${owner.whatsappUrl}">${owner.whatsappUrl}</a>` : "Not provided";
+  const social = owner?.socialUrl ? `<a href="${owner.socialUrl}">${owner.socialUrl}</a>` : "Not provided";
 
-// Send landowner verification rejection email
-export const sendLandownerRejectionEmail = async (userEmail, userName, adminNotes) => {
-  try {
-    const transporter = createTransporter();
-    
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || 'noreply@abroadease.com',
-      to: userEmail,
-      subject: 'Landowner Verification Update - AbroadEase',
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Landowner Verification Update</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background-color: #EF4444; color: white; padding: 20px; text-align: center; }
-            .content { padding: 20px; background-color: #f9f9f9; }
-            .button { display: inline-block; background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
-            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-            .notes { background-color: #FEF3C7; padding: 15px; border-left: 4px solid #F59E0B; margin: 15px 0; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>Landowner Verification Update</h1>
-            </div>
-            <div class="content">
-              <h2>Hello ${userName},</h2>
-              <p>Thank you for your interest in becoming a verified landowner on AbroadEase.</p>
-              
-              <p>After reviewing your verification request, we need additional information or documentation before we can approve your account.</p>
-              
-              ${adminNotes ? `
-                <div class="notes">
-                  <h3>Admin Notes:</h3>
-                  <p>${adminNotes}</p>
-                </div>
-              ` : ''}
-              
-              <p><strong>Next Steps:</strong></p>
-              <ul>
-                <li>Review the admin notes above (if provided)</li>
-                <li>Prepare the required documentation</li>
-                <li>Submit a new verification request with updated documents</li>
-              </ul>
-              
-              <p>You can submit a new verification request by logging into your account:</p>
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/landowner-login" class="button">
-                Login to Your Account
-              </a>
-              
-              <p>If you have any questions about the verification process, please contact our support team.</p>
-            </div>
-            <div class="footer">
-              <p>This email was sent by AbroadEase. If you didn't request this, please ignore this email.</p>
-              <p>&copy; 2024 AbroadEase. All rights reserved.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `
-    };
+  const html = `
+  <div style="font-family:Inter,Arial,sans-serif;max-width:640px;margin:auto">
+    <h2 style="color:#6d28d9">Owner contact for: ${property?.title || "Listing"}</h2>
+    <p>Hello ${student?.name || "there"},</p>
+    <p>Here are the contact details for the landowner of <strong>${property?.title || ""}</strong>${
+      property?.location ? ` (${property.location})` : ""
+    }:</p>
+    <ul>
+      <li><strong>Phone:</strong> ${phone}</li>
+      <li><strong>WhatsApp:</strong> ${wa}</li>
+      <li><strong>Social:</strong> ${social}</li>
+    </ul>
+    <p>Please be courteous and avoid sharing this contact publicly.</p>
+    <p style="color:#6b7280;font-size:12px">This email was sent by AbroadEase.</p>
+  </div>`;
 
-    const result = await transporter.sendMail(mailOptions);
-    console.log('Landowner rejection email sent successfully:', result.messageId);
-    return { success: true, messageId: result.messageId };
-  } catch (error) {
-    console.error('Error sending landowner rejection email:', error);
-    return { success: false, error: error.message };
-  }
-};
+  const info = await transporter.sendMail({
+    from: FROM,
+    to,
+    subject: `Owner contact: ${property?.title || "Property"}`,
+    html,
+  });
 
+  // For Ethereal (dev) this gives a preview link
+  const previewUrl = nodemailer.getTestMessageUrl(info) || null;
+  return { messageId: info.messageId, previewUrl };
+}

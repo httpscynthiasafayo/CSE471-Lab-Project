@@ -189,7 +189,9 @@ export default function Home() {
         {/* Hero Section */}
         <div className="hero-section rounded-3xl p-12 relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent">
-            <div className="absolute top-4 right-4 text-6xl opacity-20">🗽🏛️⛪🗼🏛️</div>
+            <div className="absolute top-4 right-4 text-6xl opacity-20">
+              🗽🏛️⛪🗼🏛️
+            </div>
           </div>
           <div className="relative z-10 max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
@@ -241,8 +243,15 @@ export default function Home() {
                     <div className={`w-16 h-16 bg-gradient-to-r ${link.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                       <span className="text-2xl text-white">{link.icon}</span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">{link.title}</h3>
-                    <p className="text-gray-600 text-sm">{link.description}</p>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                      {link.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {link.description}
+                    </p>
+                    {/* {!user && (
+                      <p className="text-xs text-red-500 mt-2">Login required</p>
+                    )} */}
                   </div>
                 );
               }
@@ -256,8 +265,12 @@ export default function Home() {
                   <div className={`w-16 h-16 bg-gradient-to-r ${link.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <span className="text-2xl text-white">{link.icon}</span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">{link.title}</h3>
-                  <p className="text-gray-600 text-sm">{link.description}</p>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                    {link.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {link.description}
+                  </p>
                 </Link>
               );
             })}

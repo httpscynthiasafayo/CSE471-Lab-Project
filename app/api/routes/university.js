@@ -14,4 +14,16 @@ router.get('/', async (req, res) => {
   res.json(universities);
 });
 
+router.get('/:id', async (req, res) => {
+  try {
+    const university = await University.findById(req.params.id).populate('programs');
+    if (!university) {
+      return res.status(404).json({ message: 'University not found' });
+    }
+    res.json(university);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;
