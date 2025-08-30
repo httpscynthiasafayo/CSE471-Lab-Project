@@ -6,3 +6,6 @@ app/api/node_modules/
 app/frontend/node_modules/
 app/web/node_modules/
 [.env](http://_vscodecontentref_/1)
+api/.env
+api/uploads/
+
